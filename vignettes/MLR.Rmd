@@ -1,0 +1,182 @@
+---
+title: "MLR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MLR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(MLR)
+```
+
+# Introduction
+Multiple linear regression (MLR), also known simply as multiple regression, is a statistical technique that uses several explanatory variables to predict the outcome of a response variable. The goal of multiple linear regression is to model the linear relationship between the explanatory (independent) variables and response (dependent) variables. In essence, multiple regression is the extension of ordinary least-squares (OLS) regression because it involves more than one explanatory variable.
+
+The package "lm" in R is used to fit linear models. It can be used to carry out regression, single stratum analysis of variance and analysis of covariance (although aov may provide a more convenient interface for these).
+
+However, it can't output the result directly without package "summary".
+
+Also, sometimes we are interested in the fitted value, the important hat matrix, and the value of SSE or SSY(especially to see how they change when adding more predictors. And we might only need F test to decide whether reject the null hypothesis.
+
+MLR package is easier to fit a linear regression model with or without intercept and when you just want to :
+1. Find the estimated y. 
+2. Find the value of SSE and/or SSY.
+3. Find the value of r square and/or adjusted r square.
+4. Find the t and/or f statistics and p values.
+5. Find the hat matrix.
+
+# Install the package
+'MLR' is a package for R, please ensure install [R](https://cloud.r-project.org/) first. Also, we recommend the [RStudio](https://www.rstudio.com/products/rstudio/download/).
+
+`MLR` can also be downloaded from github
+```
+devtools::install_github("YichuWang/MLR",build_vignettes = T)
+```
+# Loading the package
+`MLR` can be loaded to R using
+```{r}
+library(MLR)
+```
+
+# How to use
+Before we start we need two datasets as examples.
+The `"swiss_feritility"` and `"swiss_predictors"` has been included in `MLR` package, you can use the following command to see:
+
+```
+?MLR::swiss_feritility
+?MLR::swiss_predictors
+```
+
+#0. Fit a linear regression model with or without intercept and get the result of estimated y and the result of f test by default.
+
+Now, fit the regression model by `MLR` with intercept 
+and find the estimated y. Since y_hat = T and f_test = T by default, we can also get the result of estimated y and the result of f test.
+
+```{r}
+MLR(swiss_feritility, swiss_predictors)
+```
+
+Compare the regression model by `MLR` without intercept with y_hat = T and f_test = T by default. 
+
+```{r}
+MLR(swiss_feritility, swiss_predictors,intercept = F)
+```
+
+In the following models, we use intercept as default.
+
+#1 Find the estimated y. 
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = T, f_test = F)
+```
+
+#2.1 Find the value of SSE.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F,SSE = T,f_test = F,)
+```
+
+#2.2 Find the value of SSY.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F,SSY = T,f_test = F,)
+```
+
+#3.1 Find the value of r square.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F, r_square = T,f_test = F,)
+```
+
+#3.2 Find the value of adjusted r square.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F, adjusted_r_square = T,f_test = F,)
+```
+
+#4.1 Find the t statistics and p values.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F, t_test = T,f_test = F,)
+
+```
+
+#4.2 Find the f statistics and p values.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F)
+
+```
+
+#5. Find the hat matrix.
+```{r}
+MLR(swiss_feritility, swiss_predictors,
+    y_hat = F, f_test = F, hat_matrix = T)
+```
+
+
+# Correctness
+Compare the result to the original package "lm".
+
+#1. Compare beta hat, t test p value and f test p value df.
+```{r}
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$coef[,1]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors)$beta_hat))
+```
+
+#2. Compare t test and p value
+```{r}
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$coef[,3]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors, t_test = T)$t_test$t_statistics))
+
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$coef[,4]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors,t_test = T)$t_test$p_values))
+```
+
+#3. Compare f test df and p value
+```{r}
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$fstatistic[1]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors,t_test = F,f_test = T)$f_test$f_statistics))
+
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$fstatistic[2:3]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors,t_test = F,f_test = T)$f_test$df))
+
+all.equal(as.numeric(pf(summary(lm(swiss_feritility ~swiss_predictors))$fstatistic[1],
+   summary(lm(swiss_feritility ~swiss_predictors))$fstatistic[2],
+   summary(lm(swiss_feritility ~swiss_predictors))$fstatistic[3],lower.tail=FALSE)),
+          as.numeric(MLR(swiss_feritility, swiss_predictors,t_test = F,f_test = T)$f_test$p_value))
+```
+
+#4. Compare r square and adjusted r square
+```{r}
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$R_squared[,1]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors)$r_square))
+
+all.equal(as.numeric(summary(lm(swiss_feritility ~swiss_predictors))$R_squared[,1]),
+          as.numeric(MLR(swiss_feritility, swiss_predictors)$adjusted_r_square))
+```
+
+# Efficiency
+Since MLR by default only output the results of beta hat, fitted y and f test  it won't compute what users didn't need such as r square.  Using bench::mark() we can see MRL do runs fast than `lm`.
+```{r}
+compare_efficiency = bench::mark({
+  res1 = MLR(swiss_feritility, swiss_predictors)$beta_hat
+  as.vector(res1)
+}, {
+  res2 = lm(swiss_feritility ~ swiss_predictors)$coefficients
+  as.vector(res2)
+})
+compare_efficiency = as.numeric(compare_efficiency[[3]])
+print(compare_efficiency[2] / compare_efficiency[1])
+```
+
+
