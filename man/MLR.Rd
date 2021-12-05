@@ -51,14 +51,12 @@ if it's "F", the results of t-test and f-values will not be output}
 if it's "T", output the results hat matrix.}
 }
 \value{
-Output the result list containing the value you want to find.
+the result list
 }
 \description{
-MLR is used to fit linear regression models. It could be used to find the estimated y, the value of SSE and/or SSY, the value of r square and/or adjusted r square,the t and/or f statistics,p values and the hat matrix.
+MLR
 }
 \examples{
 MLR(swiss_feritility, swiss_predictors)
-MLR(swiss_feritility, swiss_predictors,intercept = F)
-MLR(c(3,5,7,9),c(1,2,3,4),y_hat = F,f_test = F)
 
 }
