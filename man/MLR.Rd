@@ -7,15 +7,15 @@
 MLR(
   y,
   x,
-  intercept = T,
-  y_hat = T,
-  SSE = F,
-  SSY = F,
-  r_square = F,
-  adjusted_r_square = F,
-  t_test = F,
-  f_test = T,
-  hat_matrix = F
+  intercept = TRUE,
+  y_hat = TRUE,
+  SSE = FALSE,
+  SSY = FALSE,
+  r_square = FALSE,
+  adjusted_r_square = FALSE,
+  t_test = FALSE,
+  f_test = TRUE,
+  hat_matrix = FALSE
 )
 }
 \arguments{
@@ -23,40 +23,45 @@ MLR(
 
 \item{x}{a matrix, rows represent each observation, columns represent predictor.}
 
-\item{intercept}{a logical value, "T" by default, the model has intercept.
-if it's "F", the model doesn't have intercept.}
+\item{intercept}{a logical value, "TRUE" by default, the model has intercept.
+if it's "FALSE", the model doesn't have intercept.}
 
-\item{y_hat}{a logical value, "T" by default, output the value of fitted y.
-if it's "F", fitted value y will not be output.}
+\item{y_hat}{a logical value, "TRUE" by default, output the value of fitted y.
+if it's "FALSE", fitted value y will not be output.}
 
-\item{SSE}{a logical value, "F" by default, SSE will not be output
-if it's "T", output the value of SSE.}
+\item{SSE}{a logical value, "FALSE" by default, SSE will not be output
+if it's "TRUE", output the value of SSE.}
 
-\item{SSY}{a logical value, "F" by default, SSY will not be output
-if it's "T", output the value of SSY.}
+\item{SSY}{a logical value, "FALSE" by default, SSY will not be output
+if it's "TRUE", output the value of SSY.}
 
-\item{r_square}{a logical value, "T" by default, output the value of r square.
-if it's "F", r square will not be output.}
+\item{r_square}{a logical value, "TRUE" by default, output the value of r square.
+if it's "FALSE", r square will not be output.}
 
-\item{adjusted_r_square}{a logical value, "F" by default, adjusted r square will not be output.
-if it's "T", output the value of adjusted r square.}
+\item{adjusted_r_square}{a logical value, "FALSE" by default, adjusted r square will not be output.
+if it's "TRUE", output the value of adjusted r square.}
 
-\item{t_test}{a logical value, "F" by default, the results of t-test and p-values will not be output.
-if it's "T", output the results of t-test and p-values.}
+\item{t_test}{a logical value, "FALSE" by default, the results of t-test and p-values will not be output.
+if it's "TURE", output the results of t-test and p-values.}
 
-\item{f_test}{a logical value, "T" by default,output the results of f-test and p-values.
-if it's "F", the results of t-test and f-values will not be output}
+\item{f_test}{a logical value, "TRUE" by default,output the results of f-test and p-values.
+if it's "FALSE", the results of t-test and f-values will not be output}
 
-\item{hat_matrix}{a logical value, "F" by default, the results of hat matrix will not be output.
-if it's "T", output the results hat matrix.}
+\item{hat_matrix}{a logical value, "FALSE" by default, the results of hat matrix will not be output.
+if it's "TRUE", output the results hat matrix.}
 }
 \value{
 the result list
 }
 \description{
-MLR
+MLR is used to fit linear regression models.
+It could be used to find the estimated y, the value of SSE and/or SSY,
+the value of r square and/or adjusted r square,the t and/or f statistics,
+p values and the hat matrix.
 }
 \examples{
 MLR(swiss_feritility, swiss_predictors)
+MLR(swiss_feritility, swiss_predictors,intercept = FALSE)
+MLR(c(3,5,7,9),c(1,2,3,4),y_hat = FALSE,f_test = FALSE)
 
 }
